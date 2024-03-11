@@ -1,5 +1,7 @@
 import { ErrorMapper } from "utils/ErrorMapper";
-
+import * as Harvester from "role.harvester"
+import * as Builder from "role.builder"
+import * as Upgrader from "role.upgrader"
 declare global {
   /*
     Example types, expand on these or remove them and add your own.
@@ -19,6 +21,8 @@ declare global {
     role: string;
     room: string;
     working: boolean;
+    building: boolean;
+    upgrading: boolean;
   }
 
   // Syntax for adding proprties to `global` (ex "global.log")
@@ -38,6 +42,18 @@ export const loop = ErrorMapper.wrapLoop(() => {
   for (const name in Memory.creeps) {
     if (!(name in Game.creeps)) {
       delete Memory.creeps[name];
+    }
+  }
+  for (var name in Game.creeps) {
+    var creep = Game.creeps[name];
+    if (creep.memory.role == 'harvester') {
+      Harvester.run(creep);
+    }
+    if (creep.memory.role == 'upgrader') {
+      Upgrader.run(creep);
+    }
+    if (creep.memory.role == 'builder') {
+      Builder.run(creep);
     }
   }
 });
